@@ -66,8 +66,16 @@ function run($, goal){
         }
     }, 1);
 
+    var getGoldenCookie = setInterval(function(){
+        var x = $('#goldenCookie');
+        if(x){
+            x.click();
+        }
+    }, 1000);
+
     return function(){
         clearInterval(clicker);
+        clearInterval(getGoldenCookie);
         $('#game').style.display = null;
     }
 }
