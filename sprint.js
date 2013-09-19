@@ -40,8 +40,9 @@ function startSprint($){
 }
 
 function run($){
+    $('#game').style.display = 'none';
     var clicker = setInterval(function(btn){
-        btn.click()
+        btn.click();
     }, 0, $('#bigCookie'));
 
     var buyFirstCursor = setInterval(function(btn){
@@ -67,6 +68,7 @@ function run($){
 
     return function(){
         clearInterval(clicker);
+        $('#game').style.display = null;
     }
 }
 
