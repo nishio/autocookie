@@ -113,16 +113,20 @@ function run($, goal){
     }, 1000);
 
     var DO_NOTHING = -1;
+    var BUY_PRODUCT = -2;
+    var NOT_AVAILABLE_PRODUCT = -3;
+    var BUY_UPGRADE = -4;
     var PRINT_DETAIL = true && (SCORE_ATTACK == false);
     var buyBestProduct = setInterval(function(){
-        var pastTime = new Date() - startTime;
+        var pastTime = (new Date() - startTime) / 1000;
         var c = getCookies();
         var r = realCPS;
         var minTime = (goal - c) / r;
         var minChoice = DO_NOTHING;
         if(PRINT_DETAIL){
-            console.log('cookie: ' + c + ', CPS: ' + r);
-            console.log('estimated end time: ' + (minTime + pastTime));
+            console.log('cookie: ' + Math.floor(c) + ', CPS: ' + Math.floor(r));
+            console.log('estimated rest time: ' + Math.floor(minTime));
+            console.log('estimated total time: ' + Math.floor(minTime + pastTime));
         }
         for(var i = 0; i < 10; i++){
             var c1 = getCost(i);
@@ -134,26 +138,33 @@ function run($, goal){
                 t = (c1 - c) / r + goal / (r + r1);
             }
             if(PRINT_DETAIL){
-                console.log(PRODUCT_NAMES[i] + ': cost=' + c1 + ' CPS=' + r1 + ' end time=' + (t + pastTime));
+                console.log(PRODUCT_NAMES[i] + ': cost=' + c1 + ' CPS=' + r1 + ' total time=' + Math.floor(t + pastTime));
             }
             if(minTime > t){
                 minTime = t;
                 if(c1 < c){ // can buy
-                    minChoice = i;
+                    minChoice = [BUY_PRODUCT, i];
                 }else{
-                    minChoice = DO_NOTHING;
+                    minChoice = [NOT_AVAILABLE_PRODUCT, i];
                 }
             }
         }
 
         if(minChoice != DO_NOTHING){
-            if(PRINT_DETAIL){
-                console.log('Buying: ' + PRODUCT_NAMES[minChoice]);
+            var type = minChoice[0];
+            if(type == BUY_PRODUCT){
+                if(PRINT_DETAIL){
+                    console.log('Buying: ' + PRODUCT_NAMES[minChoice]);
+                    $('#product' + minChoice[1]).click();
+                }
+            }else if(type == NOT_AVAILABLE_PRODUCT){
+                if(PRINT_DETAIL){
+                    console.log('Waiting... Want to buy ' + PRODUCT_NAMES[minChoice[1]]);
+                }
             }
-            $('#product' + minChoice).click();
         }else{
             if(PRINT_DETAIL){
-                console.log('Waiting');
+                console.log('Waiting to goal');
             }
         }
     }, 2000);
