@@ -61,7 +61,10 @@ function startSprint($, goal){
     prevCookie = 0;
     updateRealCPS= setInterval(function(){
         var cookie = Game.cookies;
-        realCPS = cookie - prevCookie;
+        var diff = cookie - prevCookie
+        if(diff > 0){  // if negative, it means 'bought something'
+            realCPS = diff;
+        }
         prevCookie = cookie
     }, 1000);
 
