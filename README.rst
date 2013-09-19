@@ -5,22 +5,42 @@
 RECORDS
 =======
 
-1000 cookies
-------------
+1,000 cookies
+-------------
 
-- 2673 msec : nishio
+- 2673 msec : nishio/56b8
 
- - 2.13 GHz Intel Core 2 Duo, 4 GB 1067 MHz DDR3, Mac OS X 10.7.5, Google Chrome 29.0.1547.65
- - https://github.com/nishio/autocookie/blob/56b8e591a27422ef53d1a8477271919c257dafe1/sprint.js
 
-1000000 cookies
+10,000 cookies
+--------------
+
+- 13356 msec : nishio/56b8
+
+
+100,000 cookies
 ---------------
 
-No records yet.
+- 125683 msec : nishio/56b8
 
+
+1,000,000 cookies
+-----------------
+
+- No records yet.
+
+If you beat them, send me pull requests.
 
 RULES
 =====
 
-- Don't access to `Game` object in `run` function
-- Don't modify outside of `run` function
+- Don't access to *Game* object in *run* function
+- Don't modify outside of *run* function except for reasonable justification
+
+
+CLICKER SPECS
+=============
+
+- nishio
+
+ - 2.13 GHz Intel Core 2 Duo, 4 GB 1067 MHz DDR3, Mac OS X 10.7.5, Google Chrome 29.0.1547.65
+ - https://github.com/nishio/autocookie/blob/56b8e591a27422ef53d1a8477271919c257dafe1/sprint.js
