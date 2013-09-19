@@ -12,7 +12,7 @@ function getCookies(){
     return Game.cookies
 };
 
-function startSprint($){
+function startSprint($, goal){
     // Game.HardReset
     for (var i in Game.AchievementsById){
 	var me=Game.AchievementsById[i];
@@ -28,10 +28,10 @@ function startSprint($){
     // end HardReset
 
     var startTime = new Date();
-    var teardown = run($)
+    var teardown = run($, goal);
 
     var goalWatcher = setInterval(function(){
-        if(Game.cookies > 1000){
+        if(Game.cookies > goal){
             console.log('Time: ' + (new Date() - startTime) + ' msec');
             clearInterval(goalWatcher);
             teardown();
@@ -39,7 +39,7 @@ function startSprint($){
     }, 10);
 }
 
-function run($){
+function run($, goal){
     $('#game').style.display = 'none';
     var clicker = setInterval(function(btn){
         btn.click();
