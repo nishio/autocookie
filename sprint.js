@@ -38,17 +38,19 @@ function getCost(num) {
 
 function startSprint($, goal){
     // Game.HardReset
-    for (var i in Game.AchievementsById){
-	var me=Game.AchievementsById[i];
-	me.won=0;
+    if('DO_HARD_RESET'){
+        for (var i in Game.AchievementsById){
+	    var me=Game.AchievementsById[i];
+	    me.won=0;
+        }
+        Game.AchievementsOwned=0;
+        Game.goldenClicks=0;
+        Game.missedGoldenClicks=0;
+        Game.Reset(1);
+        Game.cookiesReset=0;
+        Game.prestige=[];
+        Game.CalculatePrestige();
     }
-    Game.AchievementsOwned=0;
-    Game.goldenClicks=0;
-    Game.missedGoldenClicks=0;
-    Game.Reset(1);
-    Game.cookiesReset=0;
-    Game.prestige=[];
-    Game.CalculatePrestige();
     // end HardReset
 
     realCPS = 0;
