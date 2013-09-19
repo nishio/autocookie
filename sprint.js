@@ -4,9 +4,10 @@
 var realCPS = 0;
 var prevCookie = 0;
 var startTime;
-
-
 var updateRealCPS;
+var to_stop = false;
+
+
 
 function getCookies(){
     return Game.cookies
@@ -62,7 +63,7 @@ function startSprint($, goal){
     var teardown = run($, goal);
 
     var goalWatcher = setInterval(function(){
-        if(Game.cookies > goal){
+        if(to_stop || Game.cookies > goal){
             console.log('Time: ' + (new Date() - startTime) + ' msec');
             clearInterval(goalWatcher);
             clearInterval(updateRealCPS);
