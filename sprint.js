@@ -3,6 +3,7 @@
 // Utilities
 var realCPS = 0;
 var prevCookie = 0;
+var startTime;
 
 setInterval(function(){
     var cookie = Game.cookies;
@@ -55,7 +56,7 @@ function startSprint($, goal){
     realCPS = 0;
     prevCookie = 0;
 
-    var startTime = new Date();
+    startTime = new Date();
     var teardown = run($, goal);
 
     var goalWatcher = setInterval(function(){
