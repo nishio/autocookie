@@ -133,14 +133,17 @@ function run($, goal){
     var NOT_AVAILABLE_PRODUCT = -3;
     var BUY_UPGRADE = -4;
     var PRINT_DETAIL = true && (SCORE_ATTACK == false);
+    var subgoal = goal;
+    var subgoalStr = 'Goal';
     var buyBestProduct = setInterval(function(){
         var pastTime = (new Date() - startTime) / 1000;
         var c = getCookies();
         var r = realCPS;
-        var minTime = (goal - c) / r;
+        var minTime = (subgoal - c) / r;
         var minChoice = DO_NOTHING;
+        var targetCost = 0;
         if(PRINT_DETAIL){
-            console.log('cookie: ' + Math.floor(c) + ', CPS: ' + Math.floor(r));
+            console.log('subgoal: ' + Math.floor(subgoal) + ' cookie: ' + Math.floor(c) + ', CPS: ' + Math.floor(r));
             console.log('estimated rest time: ' + Math.floor(minTime));
             console.log('estimated total time: ' + Math.floor(minTime + pastTime));
         }
@@ -149,9 +152,9 @@ function run($, goal){
             var r1 = getCPS(i);
             var t;
             if(c1 < c){
-                t = (goal - c + c1) / (r + r1);
+                t = (subgoal - c + c1) / (r + r1);
             }else{
-                t = (c1 - c) / r + goal / (r + r1);
+                t = (c1 - c) / r + subgoal / (r + r1);
             }
             if(PRINT_DETAIL){
                 console.log(PRODUCT_NAMES[i] + ': cost=' + c1 + ' CPS=' + r1 + ' total time=' + Math.floor(t + pastTime));
@@ -162,6 +165,7 @@ function run($, goal){
                     minChoice = [BUY_PRODUCT, i];
                 }else{
                     minChoice = [NOT_AVAILABLE_PRODUCT, i];
+                    targetCost = c1;
                 }
             }
         }
@@ -173,14 +177,23 @@ function run($, goal){
                     console.log('Buying: ' + PRODUCT_NAMES[minChoice[1]]);
                 }
                 $('#product' + minChoice[1]).click();
+                subgoal = goal;
             }else if(type == NOT_AVAILABLE_PRODUCT){
+                var prod = PRODUCT_NAMES[minChoice[1]];
                 if(PRINT_DETAIL){
-                    console.log('Waiting... Want to buy ' + PRODUCT_NAMES[minChoice[1]]);
+                    console.log('Waiting... Want to buy ' + prod);
                 }
+                subgoal = targetCost;
+                subgoalStr = prod;
             }
+
         }else{
             if(PRINT_DETAIL){
-                console.log('Waiting to goal');
+                console.log('Waiting to ' + subgoalStr);
+            }
+            if(c > subgoal){
+                subgoal = goal;
+                subgoalStr = 'goal';
             }
         }
     }, 2000);
