@@ -115,13 +115,14 @@ function run($, goal){
     var DO_NOTHING = -1;
     var PRINT_DETAIL = true && (SCORE_ATTACK == false);
     var buyBestProduct = setInterval(function(){
+        var pastTime = new Date() - startTime;
         var c = getCookies();
         var r = realCPS;
         var minTime = (goal - c) / r;
         var minChoice = DO_NOTHING;
         if(PRINT_DETAIL){
             console.log('cookie: ' + c + ', CPS: ' + r);
-            console.log('estimated end time: ' + minTime);
+            console.log('estimated end time: ' + (minTime + pastTime));
         }
         for(var i = 0; i < 10; i++){
             var c1 = getCost(i);
@@ -133,7 +134,7 @@ function run($, goal){
                 t = (c1 - c) / r + goal / (r + r1);
             }
             if(PRINT_DETAIL){
-                console.log(PRODUCT_NAMES[i] + ': cost=' + c1 + ' CPS=' + r1 + ' end time=' + t);
+                console.log(PRODUCT_NAMES[i] + ': cost=' + c1 + ' CPS=' + r1 + ' end time=' + (t + pastTime));
             }
             if(minTime > t){
                 minTime = t;
