@@ -113,7 +113,7 @@ function run($, goal){
     }, 1000);
 
     var DO_NOTHING = -1;
-    var PRINT_DETAIL = true && (~SCORE_ATTACK);
+    var PRINT_DETAIL = true && (SCORE_ATTACK == false);
     var buyBestProduct = setInterval(function(){
         var c = getCookies();
         var r = realCPS;
