@@ -83,6 +83,7 @@ var PRODUCT_NAMES = ["Cursor", "Grandma", "Farm", "Factory", "Mine", "Shipment",
 var SCORE_ATTACK = true;
 
 function run($, goal){
+    $('#cookies').style.display = 'none'
     if(SCORE_ATTACK){
         $('#game').style.display = 'none';
     }
@@ -182,6 +183,7 @@ function run($, goal){
         clearInterval(getGoldenCookie);
         clearInterval(buyBestProduct);
         $('#game').style.display = null;
+        $('#cookies').style.display = null;
     }
 }
 
