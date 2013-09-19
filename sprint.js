@@ -17,6 +17,11 @@ function estimateRestTime(goal){
     return (goal - c) / r;
 }
 
+function getAvailableUpgrades(){
+    return Game.UpgradesById.filter(function(x){
+        return x.unlocked && !x.bought && x.basePrice <= getCookies()
+    });
+}
 // derived from https://gist.github.com/teppeis/6576829
 var defaultCPS = [0.5, 0.5, 2, 10, 40, 100, 400, 6666, 98765, 999999];
 
@@ -180,6 +185,13 @@ function run($, goal){
         }
     }, 2000);
 
+    var buyUpgrade = setInterval(function(){
+        getAvailableUpgrades().forEach(function(x){
+            if(x.name == 'Ambidextrous' || x.name == 'Plastic mouse'){
+                x.buy();
+            }
+        })
+    }, 2000);
 
     return function(){
         clearInterval(clicker);
