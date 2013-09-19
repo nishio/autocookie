@@ -6,8 +6,7 @@ var prevCookie = 0;
 var startTime;
 var updateRealCPS;
 var to_stop = false;
-
-
+var PRODUCT_NAMES = ["Cursor", "Grandma", "Farm", "Factory", "Mine", "Shipment", "Alchemy lab", "Portal", "Time machine", "Antimatter condenser"];
 
 function getCookies(){
     return Game.cookies
@@ -64,6 +63,7 @@ function startSprint($, goal){
     startTime = new Date();
     var teardown = run($, goal);
 
+    to_stop = false
     var goalWatcher = setInterval(function(){
         if(to_stop || Game.cookies > goal){
             console.log('Time: ' + (new Date() - startTime) + ' msec');
@@ -112,12 +112,17 @@ function run($, goal){
         }
     }, 1000);
 
+    var DO_NOTHING = -1;
+    var PRINT_DETAIL = true && (~SCORE_ATTACK);
     var buyBestProduct = setInterval(function(){
         var c = getCookies();
         var r = realCPS;
         var minTime = (goal - c) / r;
-        var minChoice = 'do nothing';
-
+        var minChoice = DO_NOTHING;
+        if(PRINT_DETAIL){
+            console.log('cookie: ' + c + ', CPS: ' + r);
+            console.log('estimated end time: ' + minTime);
+        }
         for(var i = 0; i < 10; i++){
             var c1 = getCost(i);
             var r1 = getCPS(i);
@@ -127,18 +132,30 @@ function run($, goal){
             }else{
                 t = (c1 - c) / r + goal / (r + r1);
             }
+            if(PRINT_DETAIL){
+                console.log(PRODUCT_NAMES[i] + ': cost=' + c1 + ' CPS=' + r1 + ' end time=' + t);
+            }
             if(minTime > t){
                 minTime = t;
-                minChoice = '#product' + i;
+                if(c1 < c){ // can buy
+                    minChoice = i;
+                }else{
+                    minChoice = DO_NOTHING;
+                }
             }
-            //console.log(i + ':' + c1 + ':' + r1 + ':' + t);
         }
 
-        if(minChoice != 'do nothing'){
-            $(minChoice).click();
+        if(minChoice != DO_NOTHING){
+            if(PRINT_DETAIL){
+                console.log('Buying: ' + PRODUCT_NAMES[minChoice]);
+            }
+            $('#product' + minChoice).click();
+        }else{
+            if(PRINT_DETAIL){
+                console.log('Waiting');
+            }
         }
-        console.log(minChoice);
-    }, 1000);
+    }, 2000);
 
 
     return function(){
