@@ -5,11 +5,8 @@ var realCPS = 0;
 var prevCookie = 0;
 var startTime;
 
-setInterval(function(){
-    var cookie = Game.cookies;
-    realCPS = cookie - prevCookie;
-    prevCookie = cookie
-}, 1000);
+
+var updateRealCPS;
 
 function getCookies(){
     return Game.cookies
@@ -55,6 +52,11 @@ function startSprint($, goal){
 
     realCPS = 0;
     prevCookie = 0;
+    updateRealCPS= setInterval(function(){
+        var cookie = Game.cookies;
+        realCPS = cookie - prevCookie;
+        prevCookie = cookie
+    }, 1000);
 
     startTime = new Date();
     var teardown = run($, goal);
@@ -63,6 +65,7 @@ function startSprint($, goal){
         if(Game.cookies > goal){
             console.log('Time: ' + (new Date() - startTime) + ' msec');
             clearInterval(goalWatcher);
+            clearInterval(updateRealCPS);
             teardown();
         }
     }, 10);
