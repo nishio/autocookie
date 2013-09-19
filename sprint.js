@@ -101,9 +101,39 @@ function run($, goal){
         }
     }, 1000);
 
+    var buyBestProduct = setInterval(function(){
+        var c = getCookies();
+        var r = realCPS;
+        var minTime = (goal - c) / r;
+        var minChoice = 'do nothing';
+
+        for(var i = 0; i < 10; i++){
+            var c1 = getCost(i);
+            var r1 = getCPS(i);
+            var t;
+            if(c1 < c){
+                t = (goal - c + c1) / (r + r1);
+            }else{
+                t = (c1 - c) / r + goal / (r + r1);
+            }
+            if(minTime > t){
+                minTime = t;
+                minChoice = '#product' + i;
+            }
+            //console.log(i + ':' + c1 + ':' + r1 + ':' + t);
+        }
+
+        if(minChoice != 'do nothing'){
+            $(minChoice).click();
+        }
+        console.log(minChoice);
+    }, 1000);
+
+
     return function(){
         clearInterval(clicker);
         clearInterval(getGoldenCookie);
+        clearInterval(buyBestProduct);
         $('#game').style.display = null;
     }
 }
