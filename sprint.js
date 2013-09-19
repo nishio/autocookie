@@ -6,11 +6,16 @@ var prevCookie = 0;
 var startTime;
 var updateRealCPS;
 var to_stop = false;
-var PRODUCT_NAMES = ["Cursor", "Grandma", "Farm", "Factory", "Mine", "Shipment", "Alchemy lab", "Portal", "Time machine", "Antimatter condenser"];
 
 function getCookies(){
     return Game.cookies
 };
+
+function estimateRestTime(goal){
+    var c = getCookies();
+    var r = realCPS;
+    return (goal - c) / r;
+}
 
 // derived from https://gist.github.com/teppeis/6576829
 var defaultCPS = [0.5, 0.5, 2, 10, 40, 100, 400, 6666, 98765, 999999];
@@ -74,8 +79,10 @@ function startSprint($, goal){
     }, 10);
 }
 
+var PRODUCT_NAMES = ["Cursor", "Grandma", "Farm", "Factory", "Mine", "Shipment", "Alchem..", "Portal", "Time m..", "Antima.."];
+var SCORE_ATTACK = true;
+
 function run($, goal){
-    var SCORE_ATTACK = true;
     if(SCORE_ATTACK){
         $('#game').style.display = 'none';
     }
