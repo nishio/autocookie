@@ -162,8 +162,8 @@ function run($, goal){
             if(type == BUY_PRODUCT){
                 if(PRINT_DETAIL){
                     console.log('Buying: ' + PRODUCT_NAMES[minChoice]);
-                    $('#product' + minChoice[1]).click();
                 }
+                $('#product' + minChoice[1]).click();
             }else if(type == NOT_AVAILABLE_PRODUCT){
                 if(PRINT_DETAIL){
                     console.log('Waiting... Want to buy ' + PRODUCT_NAMES[minChoice[1]]);
