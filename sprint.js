@@ -1,10 +1,12 @@
 // Cookie Clicker Sprint
-var realCpS = 0;
+
+// Utilities
+var realCPS = 0;
 var prevCookie = 0;
 
 setInterval(function(){
     var cookie = Game.cookies;
-    realCpS = cookie - prevCookie;
+    realCPS = cookie - prevCookie;
     prevCookie = cookie
 }, 1000);
 
@@ -26,6 +28,9 @@ function startSprint($, goal){
     Game.prestige=[];
     Game.CalculatePrestige();
     // end HardReset
+
+    realCPS = 0;
+    prevCookie = 0;
 
     var startTime = new Date();
     var teardown = run($, goal);
