@@ -17,3 +17,10 @@ RECORDS
 ---------------
 
 No records yet.
+
+
+RULES
+=====
+
+- Don't access to `Game` object in `run` function
+- Don't modify outside of `run` function
