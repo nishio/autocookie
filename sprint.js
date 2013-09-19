@@ -75,7 +75,11 @@ function startSprint($, goal){
 }
 
 function run($, goal){
-    $('#game').style.display = 'none';
+    var SCORE_ATTACK = true;
+    if(SCORE_ATTACK){
+        $('#game').style.display = 'none';
+    }
+
     var clicker = setInterval(function(btn){
         btn.click();
     }, 0, $('#bigCookie'));
