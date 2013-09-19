@@ -26,7 +26,7 @@ RECORDS
 1,000,000 cookies
 -----------------
 
-- No records yet.
+- 2626466 msec : nishio/5d8c
 
 If you beat them, send me pull requests.
 
