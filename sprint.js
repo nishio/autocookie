@@ -110,7 +110,7 @@ function startSprint($, goal){
 }
 
 var PRODUCT_NAMES = ["Cursor", "Grandma", "Farm", "Factory", "Mine", "Shipment", "Alchem..", "Portal", "Time m..", "Antima.."];
-var SCORE_ATTACK = true;
+var SCORE_ATTACK = false;
 
 function run($, goal){
     $('#cookies').style.display = 'none'
@@ -141,9 +141,9 @@ function run($, goal){
     var NOT_AVAILABLE_PRODUCT = -3;
     var BUY_UPGRADE = -4;
     var NOT_AVAILABLE_UPGRADE = -5;
-    var PRINT_DETAIL_FOR_EACH_PRODUCTS = false;
-    var PRINT_DETAIL_FOR_EACH_UPGRADES = true;
-    var PRINT_DETAIL = true;
+    var PRINT_DETAIL_FOR_EACH_PRODUCTS = false && !SCORE_ATTACK;
+    var PRINT_DETAIL_FOR_EACH_UPGRADES = true && !SCORE_ATTACK;
+    var PRINT_DETAIL = true && !SCORE_ATTACK;
     var subgoal = goal;
     var subgoalStr = 'Goal';
 
@@ -152,7 +152,7 @@ function run($, goal){
         var c = getCookies();
         var r = realCPS;
         var minTime = (subgoal - c) / r;
-        minTime+=0.1;  // Waiting goal is boring, so I add bias to buy things
+        minTime += 0.1;  // Waiting goal is boring, so I add bias to buy things
         var minChoice = DO_NOTHING;
         var targetCost = 0;
         if(PRINT_DETAIL){
@@ -190,10 +190,11 @@ function run($, goal){
         }
 
         // find best upgrade
+        var CLICK_PER_SECOND = 200;
         var HANDMADE_COOKIES = realCPS - getCPS();
         var NON_CURSOR = getNumberOfNonCursor();
         function twice(i){return function(){return productCPS[i]}};
-        UPGRADES_BENEFITS = {
+        var UPGRADES_BENEFITS = {
             'Reinforced index finger':
               function(){return HANDMADE_COOKIES},
             'Carpal tunnel prevention cream':
@@ -252,12 +253,40 @@ function run($, goal){
             'Ancient tablet':
               function(){return productCPS[7] / 6666 * 1666}, // 6666 += 1666
             'Insane oatling workers': twice(7),
-        }
+
+            'cookie':
+              function(){return realCPS / Game.globalCpsMult * (Game.globalCpsMult + x.power * 0.01)},
+
+            'Kitten helpers':
+              function(){return realCPS * (1 + Game.milkProgress * 0.05)},
+            'Kitten workers':
+              function(){return realCPS * (1 + Game.milkProgress * 0.1)},
+            'Kitten engineers':
+              function(){return realCPS * (1 + Game.milkProgress * 0.2)},
+            'Kitten overseers':
+              function(){return realCPS * (1 + Game.milkProgress * 0.3)},
+
+            'Plastic mouse':
+              function(){return CLICK_PER_SECOND * getCPS() * 0.01},
+            'Iron mouse':
+              function(){return CLICK_PER_SECOND * getCPS() * 0.01},
+            'Titanium mouse':
+              function(){return CLICK_PER_SECOND * getCPS() * 0.01},
+            'Adamantium mouse':
+              function(){return CLICK_PER_SECOND * getCPS() * 0.01},
+        };
+
         getAvailableUpgrades().forEach(function(x){
             var c1 = x.basePrice;
             var r1 = UPGRADES_BENEFITS[x.name];
-            if(r1 == null) return;
-            r1 = r1();
+            if(r1 == null){
+                if(x.type == 'cookie'){
+                    r1 = UPGRADES_BENEFITS['cookie'];
+                }else{
+                    return;
+                }
+            }
+            r1 = r1(x);
 
             var t;
             if(c1 < c){
@@ -283,14 +312,14 @@ function run($, goal){
             var type = minChoice[0];
             if(type == BUY_PRODUCT){
                 if(PRINT_DETAIL){
-                    console.log('Buying: ' + PRODUCT_NAMES[minChoice[1]]);
+                    console.log('Buying Product: ' + PRODUCT_NAMES[minChoice[1]]);
                 }
                 $('#product' + minChoice[1]).click();
                 subgoal = goal;
                 subgoalStr = 'goal';
             }else if(type == BUY_UPGRADE){
                 if(PRINT_DETAIL){
-                    console.log('Buying: ' + minChoice[1].name);
+                    console.log('Buying Upgrade: ' + minChoice[1].name);
                 }
                 minChoice[1].buy();
                 subgoal = goal;
