@@ -7,6 +7,7 @@ var startTime;
 var updateRealCPS;
 var to_stop = false;
 
+// utilities
 function getCookies(){
     return Game.cookies
 };
@@ -14,13 +15,27 @@ function getCookies(){
 function estimateRestTime(goal){
     var c = getCookies();
     var r = realCPS;
-    return (goal - c) / r;
+    return Math.floor(goal - c) / r;
 }
 
 function getAvailableUpgrades(){
     return Game.UpgradesById.filter(function(x){
         return x.unlocked && !x.bought && x.basePrice <= getCookies()
     });
+}
+
+function getNumberOfNonCursor(){
+    var num = 0;
+    for (var i in Game.Objects) {
+        if (Game.Objects[i].name!='Cursor') {
+            num += Game.Objects[i].amount;
+        }
+    }
+    return num;
+}
+
+function getTotalCPS(){
+    return Game.cookiesPs;
 }
 // derived from https://gist.github.com/teppeis/6576829
 var defaultCPS = [0.5, 0.5, 2, 10, 40, 100, 400, 6666, 98765, 999999];
@@ -30,6 +45,7 @@ function toNum(str) {
 }
 
 function getCPS(num) {
+    if(num == null) return getTotalCPS();
     var el = document.getElementById('rowInfoContent' + num);
     if (!el) return defaultCPS[num];
     var match = /• ([\d,]+)[\s\S]*producing ([\d,.]+)/.exec(el.innerText);
