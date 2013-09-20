@@ -26,8 +26,7 @@ RECORDS
 1,000,000 cookies
 -----------------
 
-- 742064 msec : nishio/92cf with hand manupilation
-- 773834 msec : nishio/c9b9 with hand manupilation
+- 459547 msec : nishio/3e26
 - 1207233 msec : nishio/92cf
 - 1526611 msec : nishio/c9b9
 - 2626466 msec : nishio/5d8c
