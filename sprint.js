@@ -6,6 +6,7 @@ var prevCookie = 0;
 var startTime;
 var updateRealCPS;
 var to_stop = false;
+var to_repeat = false;
 
 // utilities
 function getCookies(){
@@ -62,6 +63,7 @@ function getCost(num) {
 // end: derived from https://gist.github.com/teppeis/6576829
 
 function startSprint($, goal){
+    console.log('start sprint');
     // Game.HardReset
     if('DO_HARD_RESET'){
         for (var i in Game.AchievementsById){
@@ -99,6 +101,10 @@ function startSprint($, goal){
             clearInterval(goalWatcher);
             clearInterval(updateRealCPS);
             teardown();
+            console.log('end sprint');
+            if(to_repeat){
+                setTimeout(function(){startSprint($, goal)}, 0);
+            }
         }
     }, 10);
 }
