@@ -123,20 +123,6 @@ function run($, goal){
         }
     }, 1);
 
-    var buyRIF = setInterval(function(btn){
-        if(getCookies() >= 100){
-            $('#upgrade0').click()
-            clearInterval(buyRIF);
-        }
-    }, 1);
-
-    var buyCTP = setInterval(function(btn){
-        if(getCookies() >= 400){
-            $('#upgrade0').click()
-            clearInterval(buyCTP);
-        }
-    }, 1);
-
     var getGoldenCookie = setInterval(function(){
         var x = $('#goldenCookie');
         if(x){
@@ -148,31 +134,42 @@ function run($, goal){
     var BUY_PRODUCT = -2;
     var NOT_AVAILABLE_PRODUCT = -3;
     var BUY_UPGRADE = -4;
-    var PRINT_DETAIL = true && (SCORE_ATTACK == false);
+    var NOT_AVAILABLE_UPGRADE = -5;
+    var PRINT_DETAIL_FOR_EACH_PRODUCTS = false;
+    var PRINT_DETAIL_FOR_EACH_UPGRADES = true;
+    var PRINT_DETAIL = true;
     var subgoal = goal;
     var subgoalStr = 'Goal';
+
     var buyBestProduct = setInterval(function(){
         var pastTime = (new Date() - startTime) / 1000;
         var c = getCookies();
         var r = realCPS;
         var minTime = (subgoal - c) / r;
+        minTime+=0.1;  // Waiting goal is boring, so I add bias to buy things
         var minChoice = DO_NOTHING;
         var targetCost = 0;
         if(PRINT_DETAIL){
+            var restTime = estimateRestTime(goal);
+            console.log('\n*****\n' +
+                        'estimated rest time: ' + restTime);
+            console.log('estimated total time: ' + Math.floor(restTime + pastTime));
             console.log('subgoal: ' + Math.floor(subgoal) + ' cookie: ' + Math.floor(c) + ', CPS: ' + Math.floor(r));
-            console.log('estimated rest time: ' + Math.floor(minTime));
-            console.log('estimated total time: ' + Math.floor(minTime + pastTime));
         }
+
+        // find best product
+        var productCPS = [];
         for(var i = 0; i < 10; i++){
             var c1 = getCost(i);
             var r1 = getCPS(i);
+            productCPS.push(r1);
             var t;
             if(c1 < c){
                 t = (subgoal - c + c1) / (r + r1);
             }else{
                 t = (c1 - c) / r + subgoal / (r + r1);
             }
-            if(PRINT_DETAIL){
+            if(PRINT_DETAIL_FOR_EACH_PRODUCTS){
                 console.log(PRODUCT_NAMES[i] + ': cost=' + c1 + ' CPS=' + r1 + ' total time=' + Math.floor(t + pastTime));
             }
             if(minTime > t){
@@ -186,6 +183,96 @@ function run($, goal){
             }
         }
 
+        // find best upgrade
+        var HANDMADE_COOKIES = realCPS - getCPS();
+        var NON_CURSOR = getNumberOfNonCursor();
+        function twice(i){return function(){return productCPS[i]}};
+        UPGRADES_BENEFITS = {
+            'Reinforced index finger':
+              function(){return HANDMADE_COOKIES},
+            'Carpal tunnel prevention cream':
+              function(){return HANDMADE_COOKIES},
+            'Ambidextrous':
+              function(){return HANDMADE_COOKIES},
+            'Thousand fingers':
+              function(){return HANDMADE_COOKIES * NON_CURSOR * 0.1},
+            'Million fingers':
+              function(){return HANDMADE_COOKIES * NON_CURSOR * 0.5},
+            'Billion fingers':
+              function(){return HANDMADE_COOKIES * NON_CURSOR * 2},
+
+            'Forwards from grandma':
+              function(){return productCPS[1] / 5 * 3}, // 0.5->0.8
+            'Steel-plated rolling pins': twice(1),
+            'Lubricated dentures': twice(1),
+            'Prune juice': twice(1),
+            'Farmer grandmas': twice(1),
+            'Worker grandmas': twice(1),
+            'Miner grandmas': twice(1),
+            'Cosmic grandmas': twice(1),
+            'Transmuted grandmas': twice(1),
+            'Altered grandmas': twice(1),
+
+            'Cheap hoes':
+              function(){return productCPS[2] / 2 * 0.5}, // 2->2.5
+            'Fertilizer': twice(2),
+            'Cookie trees': twice(2),
+            'Genetically-modified cookies': twice(2),
+
+            'Sturdier conveyor belts':
+              function(){return productCPS[3] / 10 * 4}, // 10->14
+            'Child labor': twice(3),
+            'Sweatshop': twice(3),
+            'Radium reactors': twice(3),
+
+            'Sugar gas':
+              function(){return productCPS[4] / 40 * 10}, // 40->50
+            'Megadrill': twice(4),
+            'Ultradrill': twice(4),
+            'Ultimadrill': twice(4),
+
+            'Vanilla nebulae':
+              function(){return productCPS[5] / 100 * 30}, // 100->130
+            'Wormholes': twice(5),
+            'Frequent flyer': twice(5),
+            'Warp drive': twice(5),
+
+            'Antimony':
+              function(){return productCPS[6] / 400 * 100}, // 400->500
+            'Essence of dough': twice(6),
+            'True chocolate': twice(6),
+            'Ambrosia': twice(6),
+
+            'Ancient tablet':
+              function(){return productCPS[7] / 6666 * 1666}, // 6666 += 1666
+            'Insane oatling workers': twice(7),
+        }
+        getAvailableUpgrades().forEach(function(x){
+            var c1 = x.basePrice;
+            var r1 = UPGRADES_BENEFITS[x.name];
+            if(r1 == null) return;
+            r1 = r1();
+
+            var t;
+            if(c1 < c){
+                t = (subgoal - c + c1) / (r + r1);
+            }else{
+                t = (c1 - c) / r + subgoal / (r + r1);
+            }
+            if(PRINT_DETAIL_FOR_EACH_UPGRADES){
+                console.log(x.name + ': cost=' + c1 + ' CPS=' + r1 + ' total time=' + Math.floor(t + pastTime));
+            }
+            if(minTime > t){
+                minTime = t;
+                if(c1 < c){ // can buy
+                    minChoice = [BUY_UPGRADE, x];
+                }else{
+                    minChoice = [NOT_AVAILABLE_UPGRADE, x];
+                    targetCost = c1;
+                }
+            }
+        })
+
         if(minChoice != DO_NOTHING){
             var type = minChoice[0];
             if(type == BUY_PRODUCT){
@@ -194,6 +281,14 @@ function run($, goal){
                 }
                 $('#product' + minChoice[1]).click();
                 subgoal = goal;
+                subgoalStr = 'goal';
+            }else if(type == BUY_UPGRADE){
+                if(PRINT_DETAIL){
+                    console.log('Buying: ' + minChoice[1].name);
+                }
+                minChoice[1].buy();
+                subgoal = goal;
+                subgoalStr = 'goal';
             }else if(type == NOT_AVAILABLE_PRODUCT){
                 var prod = PRODUCT_NAMES[minChoice[1]];
                 if(PRINT_DETAIL){
@@ -201,8 +296,14 @@ function run($, goal){
                 }
                 subgoal = targetCost;
                 subgoalStr = prod;
+            }else if(type == NOT_AVAILABLE_UPGRADE){
+                var prod = minChoice[1].name;
+                if(PRINT_DETAIL){
+                    console.log('Waiting... Want to buy ' + prod);
+                }
+                subgoal = targetCost;
+                subgoalStr = prod;
             }
-
         }else{
             if(PRINT_DETAIL){
                 console.log('Waiting to ' + subgoalStr);
@@ -212,14 +313,6 @@ function run($, goal){
                 subgoalStr = 'goal';
             }
         }
-    }, 2000);
-
-    var buyUpgrade = setInterval(function(){
-        getAvailableUpgrades().forEach(function(x){
-            if(x.name == 'Ambidextrous' || x.name == 'Plastic mouse'){
-                x.buy();
-            }
-        })
     }, 2000);
 
     return function(){
